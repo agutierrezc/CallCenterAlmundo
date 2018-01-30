@@ -67,5 +67,15 @@ public class NoticeServiceInMemory implements NoticeService {
 		return rejectedNotices;
 	}
 
+	@Override
+	public Notice getAttendNotice(String callId) throws NoSuchElementException {
+		for (Notice notice : attendNotices) {
+			if(notice.getUUID().equals(callId)) {
+				return notice;
+			}
+		}
+		throw new NoSuchElementException();
+	}
+
 
 }

@@ -1,12 +1,14 @@
 package com.almundo.callCenter.controller.v1;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +28,7 @@ private static final Logger logger = LoggerFactory.getLogger(NoticeController.cl
 	@Autowired
 	private NoticeService noticeService;
 	
-	@RequestMapping(value = "/call/", method = RequestMethod.POST)
+	@RequestMapping(value = "/call", method = RequestMethod.POST)
     @ResponseBody
 	public ResponseEntity<Notice> createCall(@RequestParam String clientId){
 		logger.info("[NoticeController] createCall(" + clientId + ")");
@@ -45,6 +47,21 @@ private static final Logger logger = LoggerFactory.getLogger(NoticeController.cl
 		List<Notice> attendCalls = noticeService.getAllAttendNotice();
 		
 		return new ResponseEntity<List<Notice>>(attendCalls, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/call/{callId}", method = RequestMethod.GET)
+    @ResponseBody
+	public ResponseEntity<Notice> getAttendCall(@PathVariable String callId){
+		logger.info("[NoticeController] getAttendCall(" + callId + ")");
+		
+		try {
+			Notice attendCall = noticeService.getAttendNotice(callId);
+			return new ResponseEntity<Notice>(attendCall, HttpStatus.OK);
+			
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<Notice>(HttpStatus.NOT_FOUND);
+		}
+		
 	}
 	
 	@RequestMapping(value = "/call/rejectCalls", method = RequestMethod.GET)
